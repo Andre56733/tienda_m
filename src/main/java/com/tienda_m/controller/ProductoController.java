@@ -22,10 +22,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/producto")
 public class ProductoController {
 
-    @Autowired
-    private ProductoService productoService;
-    @Autowired
-    private CategoriaService categoriaService;
+    private final ProductoService productoService;
+    private final CategoriaService categoriaService;
+    private final MessageSource messageSource;
+
+    public ProductoController(ProductoService productoService, CategoriaService categoriaService, MessageSource messageSource) {
+        this.productoService = productoService;
+        this.categoriaService = categoriaService;
+        this.messageSource = messageSource;
+    }
 
     
     
@@ -43,8 +48,6 @@ public class ProductoController {
         return "/producto/listado";
 
     }
-    @Autowired
-    private MessageSource messageSource;
 
     @PostMapping("/guardar")
     public String guardar(@Valid Producto producto, @RequestParam MultipartFile imagenFile, RedirectAttributes redirectAttributes) {

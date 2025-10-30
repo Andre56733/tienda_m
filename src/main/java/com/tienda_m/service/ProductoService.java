@@ -2,6 +2,7 @@ package com.tienda_m.service;
 
 import com.tienda_m.domain.Producto;
 import com.tienda_m.repository.ProductoRepository;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,5 +62,21 @@ public class ProductoService {
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("No se puede eliminar esta producto porque tiene asociacion");
         }
+
+    }
+
+    @Transactional(readOnly = true)
+    public List<Producto> consultaDerivada(BigDecimal precioInf, BigDecimal precioSup) {
+        return productoRepository.findByPrecioBetweenOrderByPrecioAsc(precioInf, precioSup);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<Producto> consultaJPQL(BigDecimal precioInf, BigDecimal precioSup) {
+        return productoRepository.consultaJPQL(precioInf, precioSup);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<Producto> consultaSQL(BigDecimal precioInf, BigDecimal precioSup) {
+        return productoRepository.consultaSQL(precioInf, precioSup);
     }
 }

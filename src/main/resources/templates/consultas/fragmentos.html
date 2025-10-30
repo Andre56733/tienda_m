@@ -55,8 +55,8 @@
                                         <button type="submit"
                                                 th:disabled="${p.existencias == 0}"
                                                 onclick="addCart(this.form)"
-                                            class='btn btn-sm btn-primary'
-                                            <i> class='fas fa-cart-plus' ></i>
+                                                class='btn btn-sm btn-primary'
+                                                <i> class='fas fa-cart-plus' ></i>
                                         </button>
                                 </form>
                             </div>
@@ -65,5 +65,48 @@
                 </div>
 
         </section>
+        <section th:fragment="consultas">
+            <div class="row row-cols-4 p-2">
+                <div  th:replace="~{consultas/fragmentos :: formularioConsulta('/consultas/consultaDerivada',#{pruebas.ampliadas},'primary')}"/>
+                <div  th:replace="~{consultas/fragmentos :: formularioConsulta('/consultas/consultaJPQL',#{pruebas.jpql},'warning')}"/>
+                <div  th:replace="~{consultas/fragmentos :: formularioConsulta('/consultas/consultaSQL',#{pruebas.nativo},'success')}"/>
+                <div>
+                    <div class= "card">
+                        <p>tarea 2</p>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div th:fragment="formularioConsulta(actionURL,textoHeader,colorFondo)">
+            <form method="post" th:action="@{${actionUrl}}" class="was-validated">
+                <div class="card p-2">
+                    <div class="card-header text-center text-white"th:classappend="${'bg-'+colorFondo}">
+                        <h5>[[${textoHeader}]]</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label>[[#{pruebas.precio.inferior}]]</label>
+                            <input type="number" name="precioInf" class="form-control" th:value="${precioInf}" min="0" required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>[[#{pruebas.precio.superior}]]</label>
+                            <input type="number" name="precioSup" class="form-control" th:value="${precioSup}" min="0" required/>
+                        </div>
+                    </div>
+
+                    <div class="card-footer text-center">
+                        <button type="submit" class="btn text-white" th:classappend="${'btn-' + colorFondo}">
+                            <i class="fa-solid fa-magnifying-glass"></i> [[${textoHeader}]]
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
     </body>
 </html>

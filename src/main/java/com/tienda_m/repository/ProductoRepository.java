@@ -23,5 +23,11 @@ public interface ProductoRepository extends JpaRepository<Producto,Integer>{
                 value="SELECT * FROM producto p WHERE p.precio BETWEEN :precioinf AND :precioSup ORDER BY p.precio ASC")
         public List <Producto> consultaSQL(BigDecimal precioInf, BigDecimal precioSup);
 
+         //Consulta JPQL - Tarea 2
+        @Query (value="SELECT p FROM Producto p WHERE p.precio BETWEEN :precioInf AND :precioSup ORDER BY p.precio ASC")
+        public List<Producto> tarea2JPQL(BigDecimal precioInf, BigDecimal precioSup);
+        
+        
+
    
 }

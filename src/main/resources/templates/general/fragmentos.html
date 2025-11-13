@@ -21,7 +21,7 @@
                     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                    <div class="navbar-nav" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_VENDEDOR')">
                         <ul class="navbar-nav">
                             <li class="nav-item px-2"><a class="nav-link" th:href="@{/categoria/listado}">[[#{plantilla.categorias}]]</a></li>
                             <li class="nav-item px-2"><a class="nav-link" th:href="@{/producto/listado}">[[#{plantilla.productos}]]</a></li>
@@ -29,7 +29,7 @@
                             <li class="nav-item px-2"><a class="nav-link" th:href="@{/tarea2/listado}">[[#{plantilla.tarea2}]]</a></li>
 
 
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown"  sec:authorize="hasRole('ROLE_ADMIN')" >
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                                     [[#{plantilla.admin}]]</a>
                                 <ul class="dropdown-menu">
@@ -76,7 +76,10 @@
                         <ul class="navbar-nav" sec:authorize="isAuthenticated()">
                             <li class="nav-item my-auto">
                                 <a class="nav-link">
-                                    <i class="fas fa-user"></i>
+                                    <img th:src="@{|/webjars/photos/${session.imagenUsuario}|}"
+                                         alt="..."
+                                         height="40"
+                                         class='rounded-circle'/>
                                     <span sec:authentication="name" class="ms-1"></span>
                                 </a>
                             </li>

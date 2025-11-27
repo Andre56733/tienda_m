@@ -80,7 +80,7 @@ CREATE TABLE usuario (
 create table factura (
   id_factura INT NOT NULL AUTO_INCREMENT,
   id_usuario INT NOT NULL,
-  fecha date,  
+  fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
   total decimal(12,2) check (total>0),
   estado ENUM('Activa', 'Pagada', 'Anulada') NOT NULL,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -252,6 +252,8 @@ INSERT INTO ruta (ruta,requiere_rol) VALUES
 ('/registro/**',false),
 ('/403',false),
 ('/fav/**',false),
+('/consultas/**',false),
+('/css/**',false),
 ('/js/**',false),
 ('/webjars/**',false);
 

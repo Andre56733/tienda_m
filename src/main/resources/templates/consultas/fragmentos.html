@@ -51,13 +51,13 @@
                                 <span th:if="${p.existencias>0}" class="badge text-bg-success ms-2"th:text="${p.existencias}+ ' unidades'"></span>
                                 <span th:unless="${p.existencias>0}" class="badge text-bg-danger ms-2"th:text="Agotado"></span>
                                 <form action="@{/carrito/agregar}" method="post" class="d-line">
-                                    <input type="hidden" th:value='${p.idProducto>0}' name='idProducto'>
-                                        <button type="submit"
-                                                th:disabled="${p.existencias == 0}"
-                                                onclick="addCart(this.form)"
-                                                class='btn btn-sm btn-primary'
-                                                <i> class='fas fa-cart-plus' ></i>
-                                        </button>
+                                    <input type="hidden" th:value='${p.idProducto>0}' name='idProducto'/>
+                                    <button type="button"
+                                            th:disabled="${p.existencias == 0}"
+                                            onclick="addCart(this.form)"
+                                            class='btn btn-sm btn-primary'>
+                                        <i class='fas fa-cart-plus' ></i>
+                                    </button>
                                 </form>
                             </div>
                         </div>

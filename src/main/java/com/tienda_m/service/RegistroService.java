@@ -1,5 +1,6 @@
 package com.tienda_m.service;
 
+import com.tienda_m.domain.Constante;
 import com.tienda_m.domain.Usuario;
 import jakarta.mail.MessagingException;
 import java.util.Locale;
@@ -16,11 +17,13 @@ public class RegistroService {
 
     private final CorreoService correoService;
     private final UsuarioService usuarioService;
+    private final ConstanteService constanteService;
     private final MessageSource messageSource;
 
-    public RegistroService(CorreoService correoService, UsuarioService usuarioService, MessageSource messageSource) {
+    public RegistroService(CorreoService correoService, UsuarioService usuarioService, ConstanteService constanteService, MessageSource messageSource) {
         this.correoService = correoService;
         this.usuarioService = usuarioService;
+        this.constanteService = constanteService;
         this.messageSource = messageSource;
     }
 
@@ -39,7 +42,7 @@ public class RegistroService {
     //Este método es el que finalmente crea el usuario en el sistema
     public void activar(Usuario usuario, MultipartFile imagenFile) {
         usuario.setActivo(true);
-        usuarioService.save(usuario, imagenFile,true);
+        usuarioService.save(usuario, imagenFile, true);
     }
 
     public Model crearUsuario(Model model, Usuario usuario) throws MessagingException {
@@ -48,7 +51,7 @@ public class RegistroService {
             String clave = demeClave();
             usuario.setPassword(clave);
             usuario.setActivo(false);
-            usuarioService.save(usuario, null,false);
+            usuarioService.save(usuario, null, false);
             enviaCorreoActivar(usuario, clave);
             mensaje = String.format(messageSource.getMessage("registro.mensaje.activacion.ok", null, Locale.getDefault()), usuario.getCorreo());
         } catch (MessagingException | NoSuchMessageException e) {
@@ -64,13 +67,13 @@ public class RegistroService {
         String mensaje;
         Optional<Usuario> usuarioOpt = usuarioService.getUsuarioPorUsernameOCorreo(usuario.getUsername(), usuario.getCorreo());
         if (!usuarioOpt.isEmpty()) {
-            usuario=usuarioOpt.get();
+            usuario = usuarioOpt.get();
             String clave = demeClave();
             usuario.setPassword(clave);
             usuario.setActivo(false);
-            usuarioService.save(usuario, null,false);
+            usuarioService.save(usuario, null, false);
             enviaCorreoRecordar(usuario, clave);
-            mensaje = String.format(messageSource.getMessage("registro.mensaje.recordar.ok",   null, Locale.getDefault()), usuario.getCorreo());
+            mensaje = String.format(messageSource.getMessage("registro.mensaje.recordar.ok", null, Locale.getDefault()), usuario.getCorreo());
         } else {
             mensaje = String.format(messageSource.getMessage("registro.mensaje.usuario.o.correo", null, Locale.getDefault()), usuario.getUsername(), usuario.getCorreo());
         }
@@ -88,21 +91,29 @@ public class RegistroService {
         return clave;
     }
 
-    //Ojo cómo le lee una informacion del application.properties
-    @Value("${servidor.http}")
-    private String servidor;
-
     private void enviaCorreoActivar(Usuario usuario, String clave) throws MessagingException {
-        String mensaje = messageSource.getMessage("registro.correo.activar", null, Locale.getDefault());
-        mensaje = String.format(mensaje, usuario.getNombre(), usuario.getApellidos(), servidor, usuario.getUsername(), clave);
-        String asunto = messageSource.getMessage("registro.mensaje.activacion", null, Locale.getDefault());
-        correoService.enviarCorreoHtml(usuario.getCorreo(), asunto, mensaje);
+        Optional<Constante> servidorOpt = constanteService.findByAtributo("dominio");
+        if (servidorOpt.isPresent()) {
+            String servidor = servidorOpt.get().getValor();
+            String mensaje = messageSource.getMessage("registro.correo.activar", null, Locale.getDefault());
+            mensaje = String.format(mensaje, usuario.getNombre(), usuario.getApellidos(), servidor, usuario.getUsername(), clave);
+            String asunto = messageSource.getMessage("registro.mensaje.activacion", null, Locale.getDefault());
+            correoService.enviarCorreoHtml(usuario.getCorreo(), asunto, mensaje);
+        } else {
+            throw new MessagingException("No hay constante con atributo 'dominio'");
+        }
     }
 
     private void enviaCorreoRecordar(Usuario usuario, String clave) throws MessagingException {
-        String mensaje = messageSource.getMessage("registro.correo.recordar", null, Locale.getDefault());
-        mensaje = String.format(mensaje, usuario.getNombre(), usuario.getApellidos(), servidor, usuario.getUsername(), clave);
-        String asunto = messageSource.getMessage("registro.mensaje.recordar", null, Locale.getDefault());
-        correoService.enviarCorreoHtml(usuario.getCorreo(), asunto, mensaje);
+        Optional<Constante> servidorOpt = constanteService.findByAtributo("dominio");
+        if (servidorOpt.isPresent()) {
+            String servidor = servidorOpt.get().getValor();
+            String mensaje = messageSource.getMessage("registro.correo.recordar", null, Locale.getDefault());
+            mensaje = String.format(mensaje, usuario.getNombre(), usuario.getApellidos(), servidor, usuario.getUsername(), clave);
+            String asunto = messageSource.getMessage("registro.mensaje.recordar", null, Locale.getDefault());
+            correoService.enviarCorreoHtml(usuario.getCorreo(), asunto, mensaje);
+        } else {
+            throw new MessagingException("No hay constante con atributo 'dominio'");
+        }
     }
 }
